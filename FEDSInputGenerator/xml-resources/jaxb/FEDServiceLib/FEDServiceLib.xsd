@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by FAYE TUCKER (EPSIIA CORP) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://feds.fiserv.com/FEDServiceLib" targetNamespace="http://feds.fiserv.com/FEDServiceLib" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+	<xsd:element name="DocumentSearchRequest">
+		<xsd:annotation>
+			<xsd:documentation>Document Search Service Request Message</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UUID" type="UUID_Type"/>
+				<xsd:element name="Criteria" type="Criteria_Type" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Criteria should be in name/value pairs.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ResultsRange" type="ResultsRange_Type" minOccurs="0"/>
+				<xsd:element name="DocumentGet-OutputProperties" type="OutputPropertiesType" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>If present, and search results are found, the binary data of the search results will be returned.  The document included will be the first search result item if multiple are found.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="NoFilter" type="xsd:boolean" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DocumentSearchResponse">
+		<xsd:annotation>
+			<xsd:documentation>Document Search Service Response Message</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UUID" type="UUID_Type">
+					<xsd:annotation>
+						<xsd:documentation>Unique identifier</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="Status" type="Status_Type" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Element that contains the status code and status description of the response</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="SearchResult" type="SearchResult_Type" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DocumentGetRequest">
+		<xsd:annotation>
+			<xsd:documentation>Document Get Service Request Message</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UUID" type="UUID_Type">
+					<xsd:annotation>
+						<xsd:documentation>Unique identifier</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="Document" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Each Document aggregate returns a single file.  If one DocumentId is being requested the output type can be set in the output properties.  If more than one document id is requested in a single document then the output type will automatically be set to PDF.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="DocumentID" type="xsd:string" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Unique identifier for a statement. Identifiers are returned in SearchResult elements of search response messages.</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="OutputProperties" type="OutputPropertiesType">
+					<xsd:annotation>
+						<xsd:documentation>List of options for retrieving an id card</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DocumentGetResponse">
+		<xsd:annotation>
+			<xsd:documentation>Document Get Serivce Response Message</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UUID">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:length value="36"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="Status" type="Status_Type" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Element that contains the status code and status description of the response</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="Document" type="Binary_Type" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>The document requested in binary formatt.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="DocumentClip" type="DocumentClipType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ErrorResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Status_Code"/>
+				<xsd:element name="Status_Description"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="OutputPropertiesType">
+		<xsd:sequence>
+			<xsd:element name="OutputType" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>The Output Type of the the Document. ie TIFF, PDF, PNG</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ImageSize" type="xsd:string" default="100" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Valid ImageSize values are 100,300 and 600.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:choice>
+				<xsd:element name="ClipPortion">
+					<xsd:annotation>
+						<xsd:documentation>Options are Front, Back, or Both</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base="xsd:string">
+								<xsd:attribute name="SeparatePdfPages" type="xsd:boolean" default="false">
+									<xsd:annotation>
+										<xsd:documentation>If you are requesting a multi-sided ClipPortion PDF and want each side to have it's own page, then set this value to true.  This attribute will be ignored if the OutputType is other than PDF.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="SamePdfPage" type="xsd:boolean" default="false">
+									<xsd:annotation>
+										<xsd:documentation>If you are requesting a multi-sided ClipPortion PDF and want each side to be included in the same PDF, on the same page, then set this value to true.  This attribute will be ignored if the OutputType is other than PDF.  If neither SamePdfPage nor SeparatePdfPages are set to true, the response will include two separate PDF files, one side per file</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:extension>
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="AllPages" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>If enabled, the service will return all pages in the statement.  This does not apply to all output types -- image types can only be returned one page at a time.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="HitPage" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Return only the page in which the search result hit was found.  This is not necessarily the first page of the statement.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="Page" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation>Which page to return, if only a single page is required. The first page is page 1.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="PageRange">
+					<xsd:annotation>
+						<xsd:documentation>Specify a subset of pages with this field.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="StartPage" type="xsd:string" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Starting page of subset.</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="EndPage" type="xsd:string" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Ending page of subset.</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Binary_Type">
+		<xsd:annotation>
+			<xsd:documentation>The Binary data type is a compound type consisting of three logical elements.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ContentType" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Content Type.  Specified in IETF RFC 2046</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="BinLength" type="xsd:long">
+				<xsd:annotation>
+					<xsd:documentation>Binary Length.  Identifies the size of the binary data in number of bytes.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="BinData" type="xsd:base64Binary">
+				<xsd:annotation>
+					<xsd:documentation>Binary Data.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Status_Type">
+		<xsd:sequence>
+			<xsd:element name="StatusCode" type="xsd:string" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation>Response Status Code. Valid values depend on context.  If no records were found matching the criteria of the request message a status code of 1120 will be returned.  For a list of valid status codes, see appendix.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StatusDesc" type="xsd:string" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation>Status Description. Explanatory text associated with the status code. The Statue Description may be default text or Service Provider specific.  Host response is included here.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="OperatorEnum">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Equals"/>
+			<xsd:enumeration value="NotEquals"/>
+			<xsd:enumeration value="GreaterThanEquals"/>
+			<xsd:enumeration value="LessThanEquals"/>
+			<xsd:enumeration value="GreaterThan"/>
+			<xsd:enumeration value="LessThan"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="Criteria_Type">
+		<xsd:sequence>
+			<xsd:element name="Name" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>This name could be a Drawer Name,Folder Name,Report nameor an Index Name</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Value" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>Value pair of the name.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Operator" type="OperatorEnum" default="Equals" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>You may choose an operator to search on.  Valid Values are Equals, NotEquals, GreaterThanEquals, LessThanEquals, GreaterThan, or LessThan.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResultsRange_Type">
+		<xsd:sequence>
+			<xsd:element name="StartIndex" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Range start, zero-based.  Defaults to 0 if not set.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Count" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>The number of results to return.  Fewer than this amount will be returned if StartIndex + Count exceeds the total amount of results.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SearchResult_Type">
+		<xsd:sequence>
+			<xsd:element name="DocumentID" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>This is a value uniquely identifying the document. Use this identifier string to request a particular statement in a Document Request message.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Date" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date of document.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PageCount" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>Number of pages in this document.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ResultPage" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>The document page where the criteria requested was found.  Often the indexing is pushed to the first page of the documents -- this will be 1 in that case.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Detail" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>The detail information returned depends on what is available and how the service is configured.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Name" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>Name of the information.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="Value" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>Information value.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Document" type="Binary_Type" minOccurs="0"/>
+			<xsd:element name="DocumentClip" type="DocumentClipType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="UUID_Type">
+		<xsd:annotation>
+			<xsd:documentation>Unique identifier for this message</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:length value="36"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="DocumentClipType">
+		<xsd:sequence>
+			<xsd:element name="FrontSide" type="Binary_Type" minOccurs="0"/>
+			<xsd:element name="BackSide" type="Binary_Type" minOccurs="0"/>
+			<xsd:element name="AllSides" type="Binary_Type" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

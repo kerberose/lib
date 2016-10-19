@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/C:/Dev/webdev2/web-services/scalability_testing/FEDS/FEDSInputGenerator/../../../FEDService/feds-web-service/src/main/webapp/WEB-INF/wsdl/FEDServiceLib.xsd" uri="xml-resources/jaxb/FEDServiceLib/FEDServiceLib.xsd"/>
+</catalog>
